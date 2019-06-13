@@ -2,6 +2,7 @@
 <?php
 // 获取用户提交的ID===========================
 $id = $_GET['id'];
+$page = $_GET['page'];
 
 // 连接数据库================================
 $conn = mysqli_connect('localhost','root','111111','demo');
@@ -13,7 +14,7 @@ if(!$conn){
 
 // 删除文件==================================
 // 查询该id数据
-$query = mysqli_query($conn,"SELECT * FROM musiclist WHERE id = '{$id}';");
+$query = mysqli_query($conn,"SELECT * FROM musiclist WHERE id IN ({$id});");
 // 初始化错误信息存储变量
 $error_message = '';
 // 获取该行数据
@@ -36,7 +37,8 @@ if($error_message !== ''){
 }
 
 // 删除指定索引数据====================================
-$query = mysqli_query($conn,"DELETE FROM musiclist WHERE id = '{$id}';");
+$query = mysqli_query($conn,"DELETE FROM musiclist WHERE id IN ({$id});");
+echo "DELETE FROM musiclist WHERE id = '({$id})';";
 
 // 判断是否删除成功
 if(!$query){
@@ -44,7 +46,7 @@ if(!$query){
 }
 
 // 跳转回主页面
-header('location: musicList_index.php');
+header("location: musicList_index.php?page={$page}");
 
 
 // ===============================================================================================

@@ -11,6 +11,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="musiclist_add.php">添加音乐</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="musiclist_add.php" id="bulkeDletions">批量删除</a>
+            </li>
         </ul>
     </div>
 </nav>
