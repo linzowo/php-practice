@@ -23,7 +23,7 @@ function getAge($brithday)
     return $age;
 }
 
-function getDataFromDB($queryConmnet,$host='localhost',$user = 'root',$password='111111',$base='demo')
+function getDataFromDB($queryContent,$host='localhost',$user = 'root',$password='111111',$base='demo')
 {
     /**
      * @description: 
@@ -32,11 +32,11 @@ function getDataFromDB($queryConmnet,$host='localhost',$user = 'root',$password=
      */
     $conn = mysqli_connect($host, $user, $password, $base);
     if (!$conn) { // 检测数据库连接是否成功
-        exit('<h1>连接数据库失败</h1>');
+        exit("<div class='alert alert-danger' role='alert'>连接数据库失败</div>");
     }
-    $query = mysqli_query($conn, $queryConmnet);
+    $query = mysqli_query($conn, $queryContent);
     if (!$query) { // 检测标识获取是否成功
-        exit('<h1>从数据库获取数据失败</h1>');
+        exit("<div class='alert alert-danger' role='alert'>从数据库获取数据失败</div>");
     }
     return $query;
 }

@@ -1,49 +1,32 @@
+<!-- 
+  @Author: linzwo
+  @Date: 2019-06-14 10:18:31
+  @LastEditors: linzwo
+  @LastEditTime: 2019-06-17 17:08:16
+  @Description: 新增数据页面。输入：$sheetName===>输出：add_success、$id、$errormsg、用户上传的文件、数据库新增的信息
+ -->
 <?php
-// TODO 增加页
 include_once 'nav.php';
-include_once '../common.php';
+// 输出：$sheetName、
 
-
-// 变量声明区===============================================
-
-
-// 函数声明区===============================================
-function setAdd()
-{ //设置主页展示的内容和一些标签的展示状态
-    /**
-     * @description: 
-     * @param {type} 
-     * @return: 
-     */
-
-    if (empty($_GET['addtitle']) || (($_GET['addtitle'] != 'addUsers') && ($_GET['addtitle'] != 'addGoods'))) {
-        $GLOBALS['message'] = '请选择要新增的类型';
-        exit("<div class='alert alert-danger' role='alert'>请选择要新增的类型</div>");
-    }
-    // 新增users
-    if ((!empty($_GET['addtitle'])) || ($_GET['addtitle'] === 'addUsers')) {
-        // 设置对应参数值
-        $GLOBALS['field1'] = 'gender';
-        $GLOBALS['field2'] = 'birthday';
-        $GLOBALS['output1'] = '性别';
-        $GLOBALS['output2'] = '生日';
-        $GLOBALS['optionList'] = array('请选择性别', '男', '女');
-        // 确定要设置数据表
-        $GLOBALS['sheetName'] = 'msd_users';
-    }
-
-    // 新增goods
-    if ((!empty($_GET['addtitle'])) && ($_GET['addtitle'] === 'addGoods')) {
-        // 设置对应参数值
-        $GLOBALS['field1'] = 'type';
-        $GLOBALS['field2'] = 'price';
-        $GLOBALS['output1'] = '类别';
-        $GLOBALS['output2'] = '价格';
-        $GLOBALS['optionList'] = array('请选择类型', '杂货', '艺术', '建材', '表情', '珠宝');
-        // 确定要设置数据表
-        $GLOBALS['sheetName'] = 'msd_goods';
-    }
+// 输入$sheetName
+switch ($sheetName) {
+    case 'msd_users':
+        $field1 = 'gender';
+        $field2 = 'birthday';
+        $output1 = '性别';
+        $output2 = '生日';
+        $optionList = array('请选择性别', '男', '女');
+        break;
+    case 'msd_goods':
+        $field1 = 'type';
+        $field2 = 'price';
+        $output1 = '类别';
+        $output2 = '价格';
+        $optionList = array('请选择类型', '杂货', '艺术', '建材', '表情', '珠宝');
+        break;
 }
+// 输出$field1、$field2、$output1、$output2、$optionList
 
 function checkUploadData()
 {
@@ -62,8 +45,8 @@ function checkUploadData()
 
     $_FILES===>
         array(1) {
-        ["img"]=&gt;
-        array(5) {
+            ["img"]=&gt;
+            array(5) {
             ["name"]=&gt;
             string(16) "知行合一.jpg"
             ["type"]=&gt;
@@ -74,8 +57,8 @@ function checkUploadData()
             int(0)
             ["size"]=&gt;
             int(105043)
-        }
-}
+            }
+        }   
 
 
 
@@ -89,65 +72,65 @@ function checkUploadData()
     // 效验用户的内容是否合法===》
     // 姓名
     if (empty($_POST['name']) || strlen($_POST['name']) > 20) { //没有填名称或名称长度超过默认值
-        $GLOBALS['message'] = '请输入规范的名称';
+        $GLOBALS['errormsg'] = '请输入规范的名称';
         return;
     }
     // 图片
     if (empty($_FILES['img']['name'])) { //
-        $GLOBALS['message'] = '请上传图片';
+        $GLOBALS['errormsg'] = '请上传图片';
         return;
     }
     $allowedImg = ['image/jpeg', 'image/png', 'image/gif'];
     if (!in_array($_FILES['img']['type'], $allowedImg)) { // 上传的图片类型不在允许的范围内
-        $GLOBALS['message'] = '图片类型不支持，请重新上传';
+        $GLOBALS['errormsg'] = '图片类型不支持，请重新上传';
         return;
     }
     // 类别/性别
     if (($_POST['sheetName'] === 'msd_users') && in_array($_POST['gender'], $GLOBALS['optionList']) && ($_POST['gender'] === '请选择性别')) {
         // 用户未选择性别
-        $GLOBALS['message'] = '请选择性别';
+        $GLOBALS['errormsg'] = '请选择性别';
         return;
     }
 
     if (($_POST['sheetName'] === 'msd_goods') && in_array($_POST['type'], $GLOBALS['optionList']) && ($_POST['type'] === '请选择类型')) {
         // 用户未选择类型
-        $GLOBALS['message'] = '请选择类型';
+        $GLOBALS['errormsg'] = '请选择类型';
         return;
     }
 
     // 价格/年龄
     if (($_POST['sheetName'] === 'msd_users') && (empty($_POST['birthday']))) {
-        $GLOBALS['message'] = '请输入生日';
+        $GLOBALS['errormsg'] = '请输入生日';
         return;
     }
     if (($_POST['sheetName'] === 'msd_goods') && (empty($_POST['price']))) {
-        $GLOBALS['message'] = '请输入价格';
+        $GLOBALS['errormsg'] = '请输入价格';
         return;
     }
     // 判断价格/年龄是否合法
     if (($_POST['sheetName'] === 'msd_users') && (!strtotime($_POST['birthday']))) {
-        $GLOBALS['message'] = '请输入有效的生日';
+        $GLOBALS['errormsg'] = '请输入有效的生日';
         return;
     }
     if (($_POST['sheetName'] === 'msd_goods') && (strlen($_POST['price']) > 11)) {
-        $GLOBALS['message'] = '请输入有效的价格';
+        $GLOBALS['errormsg'] = '请输入有效的价格';
         return;
     }
     // 运行至此说明数据合法，开始移动文件至服务器文件夹===》
     // 提取文件信息
     $picPath = "images/";
-    $arr = explode('.',$_FILES['img']['name']);
+    $arr = explode('.', $_FILES['img']['name']);
     $imgtype = array_pop($arr);
     if (($_POST['sheetName'] === 'msd_users')) {
         $picPath .= 'users/' . uniqid() . '.' . $imgtype;
         $name = $_POST['name'];
-        $gender = $_POST['gender'] === '男'?1:0;
+        $gender = $_POST['gender'] === '男' ? 1 : 0;
         $birthday = $_POST['birthday'];
         $queryContent = "INSERT INTO msd_users (`name`,`picPath`,gender,birthday) VALUES ('{$name}','/managementSystemDemo/{$picPath}',{$gender},'{$birthday}');";
     }
 
     if (($_POST['sheetName'] === 'msd_goods')) {
-        $picPath .= 'goods/' . uniqid() . '.' . $imgtype;   
+        $picPath .= 'goods/' . uniqid() . '.' . $imgtype;
         $name = $_POST['name'];
         $type = $_POST['type'];
         $price = $_POST['price'];
@@ -155,8 +138,8 @@ function checkUploadData()
     }
 
     // 开始移动
-    if (!move_uploaded_file($_FILES['img']['tmp_name'], ('./'.$picPath))) {
-        $GLOBALS['message'] = '上传文件至服务器失败';
+    if (!move_uploaded_file($_FILES['img']['tmp_name'], ('./' . $picPath))) {
+        $GLOBALS['errormsg'] = '上传文件至服务器失败';
         return;
     }
     // 运行至此说明数据合法且上传至服务器成功，上传数据至数据库===》
@@ -164,7 +147,7 @@ function checkUploadData()
     // 释放缓存
     mysqli_free_result($query);
 
-    // 查询新添加数据的id
+    // 查询新添加数据的id===》用于返回展示页时定位新数据位置
     $queryContent = "select id from msd_users order by id DESC limit 1;";
     $query =  getDataFromDB($queryContent);
     $id = mysqli_fetch_row($query)[0];
@@ -172,12 +155,10 @@ function checkUploadData()
     mysqli_free_result($query);
 
     // 完成全部上传任务，跳转回主页面
-    $location = 'location: index.php?title='.substr($_POST['sheetName'],4)."&add_success#{$id}";
+    $location = 'location: index.php?title=' . substr($_POST['sheetName'], 4) . "&add_success#{$id}";
     header($location);
 }
-
-// 调用设置页面内容的函数======================================
-setAdd();
+// 输出：add_success、$id
 
 // 接收上传数据的区域======================================
 checkUploadData();
@@ -196,7 +177,7 @@ checkUploadData();
 
 <body>
     <!-- 错误信息显示区 -->
-    <?php echo empty($message) ? '' : "<div class='alert alert-danger' role='alert'>{$message}</div>"; ?>
+    <?php echo empty($errormsg) ? '' : "<div class='alert alert-danger' role='alert'>{$errormsg}</div>"; ?>
 
     <div class="container mt-5">
         <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data">
