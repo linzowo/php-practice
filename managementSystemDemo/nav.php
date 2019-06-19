@@ -58,7 +58,6 @@
 <html lang="zh">
     <head>
         <meta charset="UTF-8" />
-        <title>XX管理系统</title>
         <link rel="stylesheet" href="../bootstrap4.3.css">
     </head>
 
@@ -79,7 +78,7 @@
                         <a class="nav-link" href="add.php?sheetName=msd_goods&add">新增商品</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled danger" href="#">批量删除</a>
+                        <a class="nav-link disabled" href="javascript:void(0);" id="bulkDel">批量删除</a>
                     </li>
                 </ul>
             </div>

@@ -64,6 +64,8 @@ setIndex();
 <!-- 输入：html结构样式、$tableHeader、usersActive||goodsActive、$title、$tableHeader:array、$pages、$page、$query -->
 
 <head>
+    
+<title>XX管理系统</title>
     <style>
         td {
             vertical-align: middle !important;
@@ -71,8 +73,78 @@ setIndex();
     </style>
 
     <script>
-        window.onload = function() {
 
+        window.onload = function() {
+            
+            // 创建一个处理函数用于处理每个复选框被点击
+            function ckbClickHandle(){
+                checkAll.checked = true;
+                for(var i=0;i<checkboxList.length;i++){
+                    if(!checkboxList[i].checked){
+                        checkAll.checked = false;
+                        continue;
+                    }
+                }
+
+                // 判断当前按钮的状态，如果是被选中就加入数组,如果是取消选中就从数组中删除
+                if(this.checked){
+                    idArr.push(this.value);
+                }else{
+                    idArr.splice(idArr.indexOf(this.value),1);
+                }
+
+                setDelBtn();
+            }
+
+            // 处理函数：处理用户选择了需要删除的内容后，跳转按钮的状态，以及跳转连接中包含的内容
+            function setDelBtn(){
+                var delId = idArr.join(',');
+                // 设置批量删除按钮是否可用
+                if(idArr.length == 0){
+                    bulkDel.setAttribute('class','nav-link disabled');
+                    bulkDel.setAttribute('href',"javascript:void(0);");
+                }else{
+                    // 将批量删除按钮变为可以使用状态
+                    bulkDel.setAttribute('class','nav-link btn-danger');
+                    bulkDel.setAttribute('href',"delete.php?sheetName=<?php echo $sheetName; ?>&id="+delId);
+                }
+
+            }
+
+
+            // 声明一个存储数据的数组
+            var idArr = [];
+            // 设置批量删除按钮的全选和全不选
+            // 获取元素
+            // 全选按钮
+            var checkAll = document.getElementById('checkAll');
+            // 每行的复选按钮
+            var checkboxList = document.getElementsByTagName('tbody')[0].getElementsByTagName('input');
+            // 批量删除按钮
+            var bulkDel = document.getElementById('bulkDel');
+            // 根据全选按钮的状态确定下面按钮的状态
+            checkAll.onclick = function() {
+                for (var i = 0; i < checkboxList.length; i++) {
+                    checkboxList[i].checked = checkAll.checked;
+                    if(checkAll.checked){
+                        // 全选了就将本页所有的ID存储在数组中
+                        idArr.push(checkboxList[i].value);
+                    }else{
+                        // 如果没有全选就将数组清空，保证不会多次传入数据
+                        idArr.splice(0);
+                    }
+                }
+                setDelBtn();
+            };
+            // 根据下面按钮的状态确定全选按钮的状态
+            for (var i = 0; i < checkboxList.length; i++) {
+                checkboxList[i].onclick = ckbClickHandle;
+            }
+            
+            // 运行至此，输出：包含需要删除的id的数组idArr、复选框是否是全选状态
+
+            // 将要删除的id加入到跳转连接中
+            
         };
     </script>
 </head>
@@ -158,7 +230,7 @@ setIndex();
 
 
                                             <tr id="<?php echo $id; ?>">
-                                                <td><input type="checkbox" name="" id="ckb<?php echo "删除" ?>"></td>
+                                                <td><input type="checkbox" name="" value="<?php echo $id; ?>"></td>
                                                 <td><?php echo $id ?></td>
                                                 <td><?php echo $name ?></td>
                                                 <td><img src="<?php echo $picPath ?>" width="100px" height="100px"></td>
@@ -166,7 +238,7 @@ setIndex();
                                                 <td><?php echo $output2; ?></td>
                                                 <td>
                                                     <!-- 编辑按钮 -->
-                                                    <a class="btn btn-primary btn-sm" name="delete" href="edit.php?sheetName=<?php echo $sheetName; ?>&id=<?php echo $id; ?>">编辑</a>
+                                                    <a class="btn btn-primary btn-sm" name="delete" href="edit.php?sheetName=<?php echo $sheetName; ?>&page=<?php echo $page; ?>&id=<?php echo $id; ?>">编辑</a>
                                                     <!-- 删除按钮 -->
                                                     <a class="btn btn-danger btn-sm" name="delete" href="delete.php?sheetName=<?php echo $sheetName; ?>&id=<?php echo $id; ?>">删除</a>
                                                 </td>

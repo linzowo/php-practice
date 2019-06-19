@@ -155,7 +155,7 @@ function checkUploadData()
     mysqli_free_result($query);
 
     // 完成全部上传任务，跳转回主页面
-    $location = 'location: index.php?title=' . substr($_POST['sheetName'], 4) . "&add_success#{$id}";
+    $location = "location: index.php?sheetName={$_POST['sheetName']}&add_success#{$id}";
     header($location);
 }
 // 输出：add_success、$id
