@@ -137,7 +137,10 @@ function checkUploadData(){
   $setContent = "`name` = '{$GLOBALS['name']}',`picPath` = '{$GLOBALS['picPath']}',{$GLOBALS['field1']} = {$GLOBALS['option']},{$GLOBALS['field2']} = '{$GLOBALS['birOrPri']}'";
   $queryContent = "UPDATE {$GLOBALS['sheetName']} SET {$setContent} WHERE id = {$_GET['id']};";
   // var_dump($queryContent);
-  getDataFromDB($queryContent);
+  $query = getDataFromDB($queryContent);
+  // 释放缓存
+  mysqli_free_result($query);
+
   // 完成全部上传任务，跳转回主页面
   $location = "location: index.php?sheetName={$GLOBALS['sheetName']}&page={$_GET['page']}#{$_GET['id']}";
   header($location);
