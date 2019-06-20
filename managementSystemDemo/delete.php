@@ -50,10 +50,8 @@ function delete()
       string(10) "1994-12-01"
     }
     */
-    // 获取图片路径
-    $picPath = '.'.substr($row[2],21);
     // 根据路径删除图片
-    if(!unlink($picPath)){
+    if(!unlink('..'.$row[2])){
       $GLOBALS['msg'] .= "删除ID:{$row[0]}图片失败,可能图片已被删除";
     };
   };

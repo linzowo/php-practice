@@ -71,7 +71,7 @@ function checkUploadData()
 
     // 效验用户的内容是否合法===》
     // 姓名
-    if (empty($_POST['name']) || strlen($_POST['name']) > 20) { //没有填名称或名称长度超过默认值
+    if (empty($_POST['name']) || strlen($_POST['name']) > 50) { //没有填名称或名称长度超过默认值
         $GLOBALS['errormsg'] = '请输入规范的名称';
         return;
     }
@@ -118,7 +118,7 @@ function checkUploadData()
     }
     // 运行至此说明数据合法，开始移动文件至服务器文件夹===》
     // 提取文件信息
-    $picPath = "images/";
+    $picPath = "/managementSystemDemo/images/";
     $arr = explode('.', $_FILES['img']['name']);
     $imgtype = array_pop($arr);
     if (($_POST['sheetName'] === 'msd_users')) {
@@ -126,7 +126,7 @@ function checkUploadData()
         $name = $_POST['name'];
         $gender = $_POST['gender'] === '男' ? 1 : 0;
         $birthday = $_POST['birthday'];
-        $queryContent = "INSERT INTO msd_users (`name`,`picPath`,gender,birthday) VALUES ('{$name}','/managementSystemDemo/{$picPath}',{$gender},'{$birthday}');";
+        $queryContent = "INSERT INTO msd_users (`name`,`picPath`,gender,birthday) VALUES ('{$name}','{$picPath}',{$gender},'{$birthday}');";
     }
 
     if (($_POST['sheetName'] === 'msd_goods')) {
@@ -134,14 +134,22 @@ function checkUploadData()
         $name = $_POST['name'];
         $type = $_POST['type'];
         $price = $_POST['price'];
-        $queryContent = "INSERT INTO msd_goods (`name`,`picPath`,`type`,price) VALUES ('{$name}','/managementSystemDemo/{$picPath}','{$type}',{$price});";
+        $queryContent = "INSERT INTO msd_goods (`name`,`picPath`,`type`,price) VALUES ('{$name}','{$picPath}','{$type}',{$price});";
     }
 
     // 开始移动
-    if (!move_uploaded_file($_FILES['img']['tmp_name'], ('./' . $picPath))) {
+    if (!move_uploaded_file($_FILES['img']['tmp_name'], ('..' . $picPath))) {// ===>C:/file/OneDrive/codeing/phpPractice/managementSystemDemo/images/users/id.jpg===》超级绝对路径：规定到服务上的顶级盘符中进行查找
         $GLOBALS['errormsg'] = '上传文件至服务器失败';
         return;
     }
+    // if (!move_uploaded_file($_FILES['img']['tmp_name'], ("/managementSystemDemo/{$picPath}"))) {// ===>/managementSystemDemo/images/users/id.jpg===》从根目录开始查找文件夹===>不行
+    //     $GLOBALS['errormsg'] = '上传文件至服务器失败';
+    //     return;
+    // }
+    // if (!move_uploaded_file($_FILES['img']['tmp_name'], ("$picPath"))) {// ===>images/users/id.jpg可行===》与处理文件同级的文件夹可以
+    //     $GLOBALS['errormsg'] = '上传文件至服务器失败';
+    //     return;
+    // }
     // 运行至此说明数据合法且上传至服务器成功，上传数据至数据库===》
     $query =  getDataFromDB($queryContent);
     // 释放缓存
