@@ -7,7 +7,9 @@
  -->
 
 <!-- 引入公共导航栏 -->
-
+<?php 
+// TODO: 使用cookie的方式重构代码，实现数据在页面间共享
+?>
 <?php include_once 'nav.php'; ?>
 <!-- 引入公共导航栏 -->
 <!-- 输出：$page = 1、$sheetName、function setIndex()、function getAge($birthday) -->
