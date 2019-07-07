@@ -1,0 +1,70 @@
+<!--
+ * @Author: linzwo
+ * @Date: 2019-06-26 17:27:22
+ * @LastEditors: linzwo
+ * @LastEditTime: 2019-07-07 10:56:58
+ * @Description: file content
+ -->
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>jsonp方案练习</title>
+    <script>
+      // 封装一个jsonp的函数
+      function jsonp(url, params, callBack) {
+        //   创建一个唯一的函数名
+        var funcName =
+          "jsonp_" +
+          Date.now() +
+          "_" +
+          Math.random()
+            .toString()
+            .substr(2);
+
+        // 创建标签
+        var script = document.createElement("script");
+        // 处理传入参数
+        if (typeof params === "object") {
+          //一个存储用户传入params的临时数组
+          var tempArr = [];
+          // 将用户传入的params数据存入数组中
+          for (var key in params) {
+            var value = params[key];
+            tempArr.push(key + "=" + value);
+          }
+          // 将数组中的数据转换成一个指定格式的字符串
+          params = tempArr.join("&");
+          // params ===> key1=value1&key2=value2&key3=value3
+        }
+        // 添加src
+        script.src = url + "?callBack=" + funcName + "&" + params;
+        // script.src = url + "?" + params + "&callBack=" + funcName;
+        // 发起请求==》顺便将标签添加到页面中
+        document.head.appendChild(script);
+
+        // 使用唯一函数名作为函数名称，创建一个全局的方法
+        window[funcName] = function(data) {
+          callBack(data);
+
+          //   执行到此，已经获得了数据===》将请求的标签和注册的函数删除
+          //   移除请求标签
+          document.head.removeChild(script);
+          //   删除函数
+          delete window[funcName];
+        };
+      }
+
+      // 测试区=======================================
+      //   声明回调函数
+      function test(data) {
+        console.log(data);
+      }
+
+      var testObj = { key1: "value1", key2: "value2", key3: "value3" };
+      //   调用jsonp
+      jsonp("http://localhost/ajax/jsonp_data.php", testObj, test);
+    </script>
+  </head>
+  <body></body>
+</html>
